@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Travel App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <header>
+        <h1>Travel App</h1>
+    </header>
+    <main>
+        <section id="input-destination">
+            <form id="js-destination">
+                <label for="destination-entry">Please Enter a Destination:</label>
+                 <input type="text" id="destination-entry" placeholder="City, Place of interest, Country..." required>
+                <button type="submit" id="js-destination-submit">Find</button>
+            </form>
+           
+        </section>
+        <section id="location-description" class="hidden">
+            <h2>Name of Location Here</h2>
+            <p>Description of location will go here...Description of location will go here...Description of location will go here...Description of location will go here...Description of location will go here...</p>
+            <p>What information would you like to find for {Destination Name} (Choose one of the following):</p>
+            <button type="button" id="restaurants">Restaurants</button>
+            <button type="button" id="things-to-do">Things to Do</button>
+            <button type="button" id="accommodations">Accommodations</button>
+        </section>
+        <section id="results" class="hidden">
+            <h3>List of Results here:</h3>
+            <p>Placeholder PlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholder
+                PlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholder
+                Placeholder
+            </p>
+        </section>
+
+    </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
