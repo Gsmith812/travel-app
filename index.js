@@ -4,6 +4,7 @@ const apiKeyRapid = "583ca639f9msh2485b7c56c251aap137d5bjsn5fb3b724e00f";
 const apiKeyZom = "af7764942e15c7d2bff6391d65fd21c8";
 let coordinates = [];
 let locationId = "";
+let locationName = "";
 //Display functions
 
 function displayLocation(response) {
@@ -11,12 +12,13 @@ function displayLocation(response) {
     coordinates.push(response.data[0].result_object.latitude, response.data[0].result_object.longitude);
     //console.log(coordinates);
     locationId = response.data[0].result_object.location_id;
+    locationName = response.data[0].result_object.name;
     console.log(locationId);
     $("#location-description").empty();
     $("#results").empty();
     $("#location-description").append(
         `
-        <h2>${response.data[0].result_object.name}</h2>
+        <h2>${locationName}</h2>
         <img src="${response.data[0].result_object.photo.images.large.url}" alt="Picture of ${response.data[0].result_object.name}">
         <p>${response.data[0].result_object.geo_description}</p>
         <p>What information would you like to find for ${response.data[0].result_object.name} (Choose one of the following):</p>
@@ -54,7 +56,7 @@ function displayRestaurants(response) {
 function displayThingsToDo(response) {
     console.log(response);
     $("#results").empty();
-    $("#results").append(`<h2>List of top Things to Do</h2>`);
+    $("#results").append(`<h2>List of top Things to Do in ${locationName}</h2>`);
     for(let i = 0; i < response.data.length; i++) {
         if(response.data[i].location_id > 34515 && response.data[i].description !== "" && response.data[i].photo !== undefined) {
             $("#results").append(
@@ -146,6 +148,7 @@ function handleFindDestination() {
     $("form").submit(event => {
         coordinates = [];
         locationId = "";
+        locationName = "";
         const userInput = $(".js-destination-input").val();
         event.preventDefault();
         getDestination(userInput);
