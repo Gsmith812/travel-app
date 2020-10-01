@@ -28,7 +28,7 @@ function displayLocation(response) {
 function displayRestaurants(response) {
     //console.log(response);
     $("#results").empty();
-    $("#results").append(`List of Restaurants nearby ${response.location.city_name}`);
+    $("#results").append(`<h2>List of Restaurants nearby ${response.location.city_name}</h2>`);
     for(let i = 0; i < response.nearby_restaurants.length; i++) {
         //console.log(response.nearby_restaurants[i]);
         $("#results").append(
