@@ -3,12 +3,15 @@
 const apiKeyRapid = "583ca639f9msh2485b7c56c251aap137d5bjsn5fb3b724e00f";
 const apiKeyZom = "af7764942e15c7d2bff6391d65fd21c8";
 let coordinates = [];
+let locationId = "";
 //Display functions
 
 function displayLocation(response) {
-    //console.log(response);
+    console.log(response);
     coordinates.push(response.data[0].result_object.latitude, response.data[0].result_object.longitude);
     //console.log(coordinates);
+    locationId = response.data[0].result_object.location_id;
+    console.log(locationId);
     $("#location-description").empty();
     $("#results").empty();
     $("#location-description").append(
@@ -48,6 +51,33 @@ function displayRestaurants(response) {
     $("#results").removeClass("hidden");
 }
 
+function displayThingsToDo(response) {
+    console.log(response);
+    $("#results").empty();
+    $("#results").append(`<h2>List of top Things to Do</h2>`);
+    for(let i = 0; i < response.data.length; i++) {
+        if(response.data[i].location_id > 34515 && response.data[i].description !== "" && response.data[i].photo !== undefined) {
+            $("#results").append(
+                `
+                <div class="results-item">
+                    <h4>${response.data[i].name}</h4>
+                    <img src="${response.data[i].photo.images.medium.url}" alt="${response.data[i].photo.caption}">
+                    <p>${response.data[i].description}<p>
+                    <p>Address: ${response.data[i].address}</p>
+                    <p>Phone Number: ${response.data[i].phone}</p>
+                    <p><a href="${response.data[i].website}" target="_blank">Website</a></p>
+                </div>
+                `
+            );
+        }
+        else {
+            console.log("Filtered Result");
+        }
+        
+    }
+    $("#results").removeClass("hidden");
+}
+
 
 //Fetch API functions (retrieve data)
 function getDestination(location) {
@@ -61,8 +91,23 @@ function getDestination(location) {
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => displayLocation(responseJson))
-        .catch(err => alert(`Something went wrong: ${err.message}`));
+        .catch(err => alert(`Something went wrong: Not enough information - ${err.message}`));
 }
+
+function getThingsToDo() {
+    const url = `https://tripadvisor1.p.rapidapi.com/attractions/list?lang=en_US&currency=USD&sort=ranking&lunit=km&limit=20&location_id=${encodeURIComponent(locationId)}`;
+    const options = {
+        headers: new Headers({
+            "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
+            "x-rapidapi-key": apiKeyRapid
+        })
+    };
+    //console.log(url);
+    fetch(url, options)
+        .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
+        .then(responseJson => displayThingsToDo(responseJson))
+        .catch(err => console.log(`Something went wrong: ${err.message}`));
+} 
 
 function getRestaurants() {
     const url = `https://developers.zomato.com/api/v2.1/geocode?lat=${coordinates[0]}&lon=${coordinates[1]}`;
@@ -75,11 +120,20 @@ function getRestaurants() {
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => displayRestaurants(responseJson))
-        .catch(err => alert(`Something went wrong: ${err.message}`));
+        .catch(err => alert(`Something went wrong: No restaurants found - ${err.message}`));
 }
 
 
+
+
 //Event listeners
+
+function handleThingsToDoClicked() {
+    $("#location-description").on("click", "#things-to-do", event => {
+        event.preventDefault();
+        getThingsToDo();
+    });
+}
 
 function handleRestaurantsClicked() {
     $("#location-description").on("click", "#restaurants", event => {
@@ -91,10 +145,12 @@ function handleRestaurantsClicked() {
 function handleFindDestination() {
     $("form").submit(event => {
         coordinates = [];
+        locationId = "";
         const userInput = $(".js-destination-input").val();
         event.preventDefault();
         getDestination(userInput);
         handleRestaurantsClicked();
+        handleThingsToDoClicked();
     });
 }
 
