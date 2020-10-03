@@ -80,6 +80,60 @@ function displayThingsToDo(response) {
     $("#results").removeClass("hidden");
 }
 
+function createLengthOfStayForm(data) {
+    const destinationId = data.suggestions[0].entities[0].destinationId
+    const currentDate = new Date();
+    $("#results").empty();
+    $("#results").append(
+        `
+        <div class="results-form">
+            <h3>Just need a little more information...</h3>
+            <form id="length-of-stay">
+                <label for="check-in">Check-In Date:</label> 
+                <input type="date" id="check-in" class="checkIn" value="${currentDate}" min="${currentDate}" required>
+                <label for="check-out">Check-Out Date:</label>
+                <input type="date" id="check-out" class="checkOut" value="${currentDate}" min="${currentDate}" required>
+                <label for="adults">Number of Adults:</label>
+                <input type="number" id="adults" class="numberAdults" value="2" min="0" max="8" required>
+                <button type="submit" id="js-hotels-submit">Search for Places</button>
+            </form>
+        </div>
+        <div id="results-list">
+            <h3>List of places to stay:</h3>
+        </div>
+        `
+    )
+    $("#results").removeClass("hidden");
+    handleHotelsButton(destinationId);
+}
+
+function displayHotelsList(data) {
+    console.log(data);
+    if(data.result !== "OK") {
+        alert("Search failed!");
+    }
+    else {
+        let resultsList = data.data.body.searchResults.results
+        for(let i = 0; i < resultsList.length; i++) {
+            console.log(resultsList[i]);
+            $("#results-list").append( 
+                `
+                <div class="results-item">
+                    <h4>${resultsList[i].name}</h4>
+                    <img src="${resultsList[i].thumbnailUrl}" alt="Thumbnail picture of property">
+                    <p>Rating: ${resultsList[i].guestReviews.unformattedRating} out of ${resultsList[i].guestReviews.scale} - ${resultsList[i].guestReviews.badgeText} - From ${resultsList[i].guestReviews.total} Reviews</p>
+                    <p>Area: ${resultsList[i].neighbourhood}</p>
+                    <p>Address: ${resultsList[i].address.streetAddress}, ${resultsList[i].address.locality} , ${resultsList[i].address.postalCode}</p>
+                    <p>Average Nightly Price: ${resultsList[i].ratePlan.price.current} per night</p>
+                </div>
+                `
+            );
+        }
+    }
+    
+        
+}
+
 
 //Fetch API functions (retrieve data)
 function getDestination(location) {
@@ -125,10 +179,62 @@ function getRestaurants() {
         .catch(err => alert(`Something went wrong: No restaurants found - ${err.message}`));
 }
 
+function getLocationId() {
+    const url = `https://hotels4.p.rapidapi.com/locations/search?locale=en_US&query=${encodeURIComponent(locationName)}`
+    const options = {
+        headers: new Headers({
+            "x-rapidapi-host": "hotels4.p.rapidapi.com",
+            "x-rapidapi-key": apiKeyRapid
+        })
+    };
+    fetch(url, options)
+        .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
+        .then(responseJson => createLengthOfStayForm(responseJson))
+        .catch(err => alert(`Something went wrong: ${err.message}`));
+}
+
+function getHotelsList(checkIn, checkOut, numberAdults, destinationId) {
+    const url = `https://hotels4.p.rapidapi.com/properties/list?currency=USD&locale=en_US&sortOrder=GUEST_RATING&destinationId=${destinationId}&pageNumber=1&checkIn=${checkIn}&checkOut=${checkOut}&pageSize=25&adults1=${numberAdults}`;
+    const options = {
+        headers: new Headers({
+            "x-rapidapi-host": "hotels4.p.rapidapi.com",
+            "x-rapidapi-key": apiKeyRapid
+        })
+    }
+    fetch(url, options)
+        .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
+        .then(responseJson => displayHotelsList(responseJson))
+        .catch(err => `Something went wrong: ${err.message}`);
+}
+
 
 
 
 //Event listeners
+
+function handleHotelsButton(destinationId) {
+    console.log(destinationId);
+    $("#results").on("click", "#js-hotels-submit", event => {
+        event.preventDefault();
+        const checkIn = $(".checkIn").val();
+        const checkOut = $(".checkOut").val();
+        const numberAdults = $(".numberAdults").val();
+        if(checkIn > checkOut) {
+            alert("Check-In Date must be earlier than Check-Out Date")
+        }
+        else {
+            getHotelsList(checkIn, checkOut, numberAdults, destinationId);
+        }
+    });
+
+}
+
+function handleAccommodationsClicked() {
+    $("#location-description").on("click", "#accommodations", event => {
+        event.preventDefault();
+        getLocationId();
+    });
+}
 
 function handleThingsToDoClicked() {
     $("#location-description").on("click", "#things-to-do", event => {
@@ -154,6 +260,7 @@ function handleFindDestination() {
         getDestination(userInput);
         handleRestaurantsClicked();
         handleThingsToDoClicked();
+        handleAccommodationsClicked();
     });
 }
 
