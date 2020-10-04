@@ -8,12 +8,10 @@ let locationName = "";
 //Display functions
 
 function displayLocation(response) {
-    console.log(response);
     coordinates.push(response.data[0].result_object.latitude, response.data[0].result_object.longitude);
     //console.log(coordinates);
     locationId = response.data[0].result_object.location_id;
     locationName = response.data[0].result_object.name;
-    console.log(locationId);
     $("#location-description").empty();
     $("#results").empty();
     $("#location-description").append(
@@ -108,7 +106,6 @@ function createLengthOfStayForm(data) {
 }
 
 function displayHotelsList(data) {
-    console.log(data);
     if(data.result !== "OK") {
         alert("Search failed!");
     }
@@ -158,7 +155,6 @@ function getThingsToDo() {
             "x-rapidapi-key": apiKeyRapid
         })
     };
-    //console.log(url);
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => displayThingsToDo(responseJson))
@@ -213,14 +209,17 @@ function getHotelsList(checkIn, checkOut, numberAdults, destinationId) {
 //Event listeners
 
 function handleHotelsButton(destinationId) {
-    console.log(destinationId);
     $("#results").on("click", "#js-hotels-submit", event => {
         event.preventDefault();
+        const currentDate = new Date();
         const checkIn = $(".checkIn").val();
         const checkOut = $(".checkOut").val();
         const numberAdults = $(".numberAdults").val();
         if(checkIn > checkOut) {
             alert("Check-In Date must be earlier than Check-Out Date")
+        }
+        else if (new Date(checkIn) <= currentDate || new Date(checkOut) < currentDate) {
+            alert("Check-In and Out dates cannot be in the past.")
         }
         else {
             getHotelsList(checkIn, checkOut, numberAdults, destinationId);
