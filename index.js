@@ -34,27 +34,34 @@ function displayLocation(response) {
 //Displays a list of restaurants when the corresponding button is pressed
 function displayRestaurants(response) {
     $("#results").empty();
-    $("#results").append(`<h2>List of Restaurants nearby ${response.location.city_name}</h2>`);
-    for(let i = 0; i < response.nearby_restaurants.length; i++) {
-        $("#results").append(
-            `
-            <div class="results-item">
-                <h4>Name of Restaurant: ${response.nearby_restaurants[i].restaurant.name}</h4>
-                <img src="images/restaurant-img.jpg" alt="Stock photo of food dishes">
-                <p>Type of Cuisines: ${response.nearby_restaurants[i].restaurant.cuisines}</p>
-                <p>Average Price(for 2 people): ${response.nearby_restaurants[i].restaurant.currency}${response.nearby_restaurants[i].restaurant.average_cost_for_two}</p>
-                <p>Address: ${response.nearby_restaurants[i].restaurant.location.address}</p>
-                <p>Rating: ${response.nearby_restaurants[i].restaurant.user_rating.rating_text} from ${response.nearby_restaurants[i].restaurant.user_rating.votes} people's votes.</p>
-                <p><a href="${response.nearby_restaurants[i].restaurant.menu_url}" target="_blank">Menu</a><a href="${response.nearby_restaurants[i].restaurant.url}" target="_blank">More info..</a></p>
-            </div>
-            `
-        );
+    $("#results").append(`<h2>List of Restaurants nearby ${locationName}</h2>`);
+    for(let i = 0; i < response.data.length; i++) {
+        let restaurant = response.data[i];
+        if(restaurant.photo === undefined || restaurant.description === "" || restaurant.price_level === "") {
+            console.log("Results filtered...")
+        }
+        else {
+            $("#results").append(
+                `
+                <div class="results-item">
+                    <h4>Name of Restaurant: ${restaurant.name}</h4>
+                    <img src="${restaurant.photo.images.medium.url}" alt="${restaurant.photo.caption}">
+                    <p>${restaurant.description}</p>
+                    <p>Price Level: ${restaurant.price_level}</p>
+                    <p>Address: ${restaurant.address}</p>
+                    <p>Rating: ${restaurant.rating} out of 5</p>
+                    <p><a href="${restaurant.website}" target="_blank">Website</a></p>
+                </div>
+                `
+            );
+        }
+        
     }
     $("#results").removeClass("hidden");
 }
 
+//Function controls displaying the html dynamically after the things to button is pressed
 function displayThingsToDo(response) {
-    console.log(response);
     $("#results").empty();
     $("#results").append(`<h2>List of top Things to Do in ${locationName}</h2>`);
     for(let i = 0; i < response.data.length; i++) {
@@ -163,11 +170,11 @@ function getThingsToDo() {
 } 
 
 function getRestaurants() {
-    const url = `https://developers.zomato.com/api/v2.1/geocode?lat=${coordinates[0]}&lon=${coordinates[1]}`;
+    const url = `https://tripadvisor1.p.rapidapi.com/restaurants/list?restaurant_tagcategory_standalone=10591&lunit=km&restaurant_tagcategory=10591&limit=30&currency=USD&lang=en_US&location_id=${locationId}`;
     const options = {
         headers: new Headers({
-            "Accept": "application/json",
-            "user-key": apiKeyZom
+            "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
+            "x-rapidapi-key": apiKeyRapid
         })
     };
     fetch(url, options)
