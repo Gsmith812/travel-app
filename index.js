@@ -1,5 +1,6 @@
 "use strict";
 
+//Global stored values (Would like to create a global state object to store these in..)
 const apiKeyRapid = "583ca639f9msh2485b7c56c251aap137d5bjsn5fb3b724e00f";
 const apiKeyZom = "af7764942e15c7d2bff6391d65fd21c8";
 let coordinates = [];
@@ -7,19 +8,21 @@ let locationId = "";
 let locationName = "";
 //Display functions
 
+//Displays dynamically the description and name of the place inputted by the user
+//Shows the other buttons required to navigate to useful information
 function displayLocation(response) {
-    coordinates.push(response.data[0].result_object.latitude, response.data[0].result_object.longitude);
-    //console.log(coordinates);
-    locationId = response.data[0].result_object.location_id;
-    locationName = response.data[0].result_object.name;
+    const locationData = response.data[0].result_object;
+    coordinates.push(locationData.latitude, locationData.longitude);
+    locationId = locationData.location_id;
+    locationName = locationData.name;
     $("#location-description").empty();
     $("#results").empty();
     $("#location-description").append(
         `
         <h2>${locationName}</h2>
-        <img src="${response.data[0].result_object.photo.images.large.url}" alt="Picture of ${response.data[0].result_object.name}">
-        <p>${response.data[0].result_object.geo_description}</p>
-        <p>What information would you like to find for ${response.data[0].result_object.name} (Choose one of the following):</p>
+        <img src="${locationData.photo.images.large.url}" alt="Picture of ${locationData.name}">
+        <p>${locationData.geo_description}</p>
+        <p>What information would you like to find for ${locationData.name} (Choose one of the following):</p>
         <button type="button" id="restaurants">Restaurants</button>
         <button type="button" id="things-to-do">Things to Do</button>
         <button type="button" id="accommodations">Accommodations</button>
@@ -28,12 +31,11 @@ function displayLocation(response) {
     $("#location-description").removeClass("hidden");
 }
 
+//Displays a list of restaurants when the corresponding button is pressed
 function displayRestaurants(response) {
-    //console.log(response);
     $("#results").empty();
     $("#results").append(`<h2>List of Restaurants nearby ${response.location.city_name}</h2>`);
     for(let i = 0; i < response.nearby_restaurants.length; i++) {
-        //console.log(response.nearby_restaurants[i]);
         $("#results").append(
             `
             <div class="results-item">
@@ -112,7 +114,6 @@ function displayHotelsList(data) {
     else {
         let resultsList = data.data.body.searchResults.results
         for(let i = 0; i < resultsList.length; i++) {
-            console.log(resultsList[i]);
             $("#results-list").append( 
                 `
                 <div class="results-item">
