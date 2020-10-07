@@ -17,7 +17,6 @@ function displayLocation(response) {
     store.locationId = locationData.location_id;
     store.locationName = locationData.name;
     let locationImg = locationData.photo.images.original.url
-    console.log(store);
     $("#location-description").empty();
     $("#results").empty();
     $("#location-description").append(
@@ -53,7 +52,7 @@ function displayRestaurants(response) {
                     <p><b>Price Level:</b> ${restaurant.price_level}</p>
                     <p><b>Address:</b> ${restaurant.address}</p>
                     <p><b>Rating:</b> ${restaurant.rating} out of 5</p>
-                    <p><a href="${restaurant.website}" target="_blank">Website</a></p>
+                    <p class="website"><a href="${restaurant.website}" target="_blank">Website</a></p>
                 </div>
                 `
             );
@@ -76,7 +75,7 @@ function displayThingsToDo(response) {
                     <p>${response.data[i].description}<p>
                     <p><b>Address:</b> ${response.data[i].address}</p>
                     <p><b>Phone Number:</b> ${response.data[i].phone}</p>
-                    <p><a href="${response.data[i].website}" target="_blank">Website</a></p>
+                    <p class="website"><a href="${response.data[i].website}" target="_blank">Website</a></p>
                 </div>
                 `
             );
@@ -104,7 +103,7 @@ function createLengthOfStayForm(data) {
                 <input type="date" id="check-out" class="checkOut" value="${currentDate}" min="${currentDate}" required>
                 <label for="adults">Number of Adults:</label>
                 <input type="number" id="adults" class="numberAdults" value="2" min="0" max="8" required>
-                <button type="submit" id="js-hotels-submit">Search Places</button>
+                <button type="submit" id="js-hotels-submit">Search</button>
             </form>
         </div>
         <div id="results-list">
