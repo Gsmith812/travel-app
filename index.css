@@ -198,7 +198,7 @@ h3 {
 }
 
 /*Desktop Version*/
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1100px) {
     #location-description img {
         width: 100%;
     }
