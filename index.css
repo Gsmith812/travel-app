@@ -80,6 +80,7 @@ button {
     color: white;
     border: none;
     margin-top: 20px;
+    font-family: "Open Sans", 'Courier New', Courier, monospace;
 }
 
 button:hover {
@@ -143,9 +144,6 @@ h3 {
     border-radius: 10px;
 }
 
-.results-item:hover {
-    background-color: #fca311;
-}
 
 .results-item h4 {
     text-align: center;
@@ -157,9 +155,30 @@ h3 {
     color: #ffffff;
 }
 
+/*Style the Link in results to look like a button*/
+
+.results-item a {
+    text-decoration: none;
+    background-color: #fca311;
+    padding: 5px 10px;
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+}
+
+.results-item a:hover {
+    background-color: #14213d;
+    color: #ffffff;
+}
+
+.website {
+    text-align: right;
+    margin: 20px 10px; 
+}
 /*Accomodations Input Form*/
 
-#length-of-stay{
+#length-of-stay {
     width: 50%;
     margin-left: auto;
     margin-right: auto;
@@ -176,4 +195,55 @@ h3 {
 .results-form button:hover {
     background-color: #000000;
     color: #ffffff;
+}
+
+/*Desktop Version*/
+@media screen and (min-width: 800px) {
+    #location-description img {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 72px;
+    }
+    
+    #location-description h2 {
+        font-size: 64px;
+    }
+
+    p {
+        font-size: 20px;
+        margin: 30px;
+    }
+
+    button {
+        font-size: 38px;
+        margin-bottom: 30px;
+    }
+
+    .results-item {
+        margin-bottom: 30px;
+    }
+
+    .results-item a {
+        font-size: 30px;
+    }
+
+    #input-destination label {
+        font-size: 28px;
+    }
+
+    #location-description h4 {
+        font-size: 40px;
+    }
+
+    .results-item h4 {
+        font-size: 34px;
+    }
+
+    .js-destination-input {
+        height: 60px;
+        font-size: 30px;
+    }
+    
 }
