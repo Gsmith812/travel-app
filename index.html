@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Travel App</title>
+    <title>World Wide Wanderlust</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
     <link rel="stylesheet" href="index.css">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 </head>
 <body>
     <header>
-        <h1>Travel App</h1>
+        <h1>World Wide Wanderlust</h1>
     </header>
     <main>
         <section id="input-destination">
             <form id="js-destination">
-                <label for="destination-entry">Please Enter a City:</label>
-                 <input type="text" id="destination-entry" class="js-destination-input" placeholder="Enter City Name here..." required>
+                <label for="destination-entry">Enter City:</label>
+                 <input type="text" id="destination-entry" class="js-destination-input" placeholder="New York City" required>
                 <button type="submit" id="js-destination-submit">Find</button>
             </form>
            
@@ -23,16 +23,23 @@
             <h2>Name of Location Here</h2>
             <p>Description of location will go here...Description of location will go here...Description of location will go here...Description of location will go here...Description of location will go here...</p>
             <p>What information would you like to find for {Destination Name} (Choose one of the following):</p>
-            <button type="button" id="restaurants">Restaurants</button>
-            <button type="button" id="things-to-do">Things to Do</button>
-            <button type="button" id="accommodations">Accommodations</button>
+            <div class="initial-buttons">
+                <button type="button" id="restaurants">Restaurants</button>
+                <button type="button" id="things-to-do">Things to Do</button>
+                <button type="button" id="accommodations">Accommodations</button>
+            </div>
         </section>
         <section id="results" class="hidden">
             <h3>List of Results here:</h3>
-            <p>Placeholder PlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholder
-                PlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholder
-                Placeholder
-            </p>
+            <div class="results-item">
+                <h4>Name of Restaurant: ${restaurant.name}</h4>
+                <img src="${restaurant.photo.images.medium.url}" alt="${restaurant.photo.caption}">
+                <p>${restaurant.description}</p>
+                <p>Price Level: ${restaurant.price_level}</p>
+                <p>Address: ${restaurant.address}</p>
+                <p>Rating: ${restaurant.rating} out of 5</p>
+                <p><a href="${restaurant.website}" target="_blank">Website</a></p>
+            </div>
         </section>
 
     </main>
