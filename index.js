@@ -12,6 +12,7 @@ let store = {
 //Displays dynamically the description and name of the place inputted by the user
 //Shows the other buttons required to navigate to useful information
 function displayLocation(response) {
+    console.log(response)
     const locationData = response.data[0].result_object;
     store.coordinates.push(locationData.latitude, locationData.longitude);
     store.locationId = locationData.location_id;
@@ -23,6 +24,9 @@ function displayLocation(response) {
     if(response.data[0].result_type !== "geos") {
         //Accounts for edge case if user types anything that doesn't return a geo location
         $(".js-find-error").text("Unable to find city, Please try again.");
+    }
+    else if(locationData.geo_type === "broad") {
+        $(".js-find-error").text("Search too broad, please search for a city instead.");
     }
     else {
         $(".js-find-error").empty();
