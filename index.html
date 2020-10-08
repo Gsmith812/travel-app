@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World Wide Wanderlust</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
     <link rel="stylesheet" href="index.css">
@@ -19,13 +19,18 @@
                  <input type="text" id="destination-entry" class="js-destination-input" placeholder="New York City" required>
                 <button type="submit" id="js-destination-submit">Find</button>
             </form>
-           
+            <div class="loader hidden" id="find-destination"></div>
+            <div class="js-find-error">
+                
+            </div>
         </section>
         <section id="location-description" class="hidden">
-
-        </section>
-        <section id="results" class="hidden">
             
+        </section>
+        <div class="loader hidden" id="results-load"></div>
+        <section id="results" class="hidden">
+            <div class="loader hidden" id="results-load"></div>
+        
         </section>
 
     </main>
