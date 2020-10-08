@@ -20,6 +20,7 @@ function displayLocation(response) {
     $("#location-description").empty();
     $("#results").empty();
     if(response.data[0].result_type !== "geos") {
+        //Accounts for edge case if user types anything that doesn't return a geo location
         alert("Unable to find Location, Please try again.");
     }
     else {
@@ -52,7 +53,7 @@ function displayRestaurants(response) {
                 `
                 <div class="results-item">
                     <h4>${restaurant.name}</h4>
-                    <img src="${restaurant.photo.images.medium.url}" alt="${restaurant.photo.caption}">
+                    <img src="${restaurant.photo.images.original.url}" alt="${restaurant.photo.caption}">
                     <p>${restaurant.description}</p>
                     <p><b>Price Level:</b> ${restaurant.price_level}</p>
                     <p><b>Address:</b> ${restaurant.address}</p>
@@ -76,7 +77,7 @@ function displayThingsToDo(response) {
                 `
                 <div class="results-item">
                     <h4>${response.data[i].name}</h4>
-                    <img src="${response.data[i].photo.images.medium.url}" alt="${response.data[i].photo.caption}">
+                    <img src="${response.data[i].photo.images.original.url}" alt="${response.data[i].photo.caption}">
                     <p>${response.data[i].description}<p>
                     <p><b>Address:</b> ${response.data[i].address}</p>
                     <p><b>Phone Number:</b> ${response.data[i].phone}</p>
