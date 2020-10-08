@@ -20,5 +20,6 @@ Location Description & Extra information
 - Receive a short description of the city
 - Choose more information to look up (ex. Restaurants, Things to Do, Accomodations)
 - Choose dates and number of guests to receive a list of possible accomodations during your dates
----
-## Created by George Smith
+## Live Link
+---  
+- [World Wide Wanderlust](https://gsmith812.github.io/world-wide-wanderlust/)
