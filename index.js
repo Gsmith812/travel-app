@@ -19,19 +19,25 @@ function displayLocation(response) {
     let locationImg = locationData.photo.images.original.url
     $("#location-description").empty();
     $("#results").empty();
-    $("#location-description").append(
-        `
-        <img src="${locationImg}" alt="${locationData.photo.caption}">
-        <h2>${store.locationName}</h2>
-        <p>${locationData.geo_description}</p>
-        <div class="initial-buttons">
-            <button type="button" id="restaurants">Restaurants</button>
-            <button type="button" id="things-to-do">Things to Do</button>
-            <button type="button" id="accommodations">Accommodations</button>
-        </div>
-        `
-    );
-    $("#location-description").removeClass("hidden");
+    console.log(response);
+    if(response.data[0].result_type !== "geo") {
+        alert("Unable to find Location, Please try again.");
+    }
+    else {
+        $("#location-description").append(
+            `
+            <img src="${locationImg}" alt="${locationData.photo.caption}">
+            <h2>${store.locationName}</h2>
+            <p>${locationData.geo_description}</p>
+            <div class="initial-buttons">
+                <button type="button" id="restaurants">Restaurants</button>
+                <button type="button" id="things-to-do">Things to Do</button>
+                <button type="button" id="accommodations">Accommodations</button>
+            </div>
+            `
+        );
+        $("#location-description").removeClass("hidden");
+    }
 }
 
 //Displays a list of restaurants when the corresponding button is pressed
