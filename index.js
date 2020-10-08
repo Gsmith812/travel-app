@@ -17,13 +17,15 @@ function displayLocation(response) {
     store.locationId = locationData.location_id;
     store.locationName = locationData.name;
     let locationImg = locationData.photo.images.original.url
+    $("#find-destination").toggleClass("hidden");
     $("#location-description").empty();
     $("#results").empty();
     if(response.data[0].result_type !== "geos") {
         //Accounts for edge case if user types anything that doesn't return a geo location
-        alert("Unable to find Location, Please try again.");
+        $(".js-find-error").text("Unable to find city, Please try again.");
     }
     else {
+        $(".js-find-error").empty();
         $("#location-description").append(
             `
             <img src="${locationImg}" alt="${locationData.photo.caption}">
@@ -34,6 +36,9 @@ function displayLocation(response) {
                 <button type="button" id="things-to-do">Things to Do</button>
                 <button type="button" id="accommodations">Accommodations</button>
             </div>
+            <div class="js-results-err">
+
+            </div>
             `
         );
         $("#location-description").removeClass("hidden");
@@ -42,14 +47,13 @@ function displayLocation(response) {
 
 //Displays a list of restaurants when the corresponding button is pressed
 function displayRestaurants(response) {
+    $("#results-load").toggleClass("hidden");
     $("#results").empty();
+    $("#results").append(`<div id="results-list"></div>`)
     for(let i = 0; i < response.data.length; i++) {
         let restaurant = response.data[i];
-        if(restaurant.photo === undefined || restaurant.description === "" || restaurant.price_level === "") {
-            console.log("Results filtered...")
-        }
-        else {
-            $("#results").append(
+        if(restaurant.photo !== undefined && restaurant.description !== "" && restaurant.price_level !== "") {
+            $("#results-list").append(
                 `
                 <div class="results-item">
                     <h4>${restaurant.name}</h4>
@@ -65,15 +69,24 @@ function displayRestaurants(response) {
         }
         
     }
+    $("#results-list").append(
+        `
+        <div class="back-to-top">
+            <a href="#input-destination">Back to Search</a>
+        </div>
+        `
+    )
     $("#results").removeClass("hidden");
 }
 
 //Function controls displaying the html dynamically after the things to button is pressed
 function displayThingsToDo(response) {
+    $("#results-load").toggleClass("hidden");
     $("#results").empty();
+    $("#results").append(`<div id="results-list"></div>`)
     for(let i = 0; i < response.data.length; i++) {
         if(response.data[i].location_id > 34515 && response.data[i].description !== "" && response.data[i].photo !== undefined) {
-            $("#results").append(
+            $("#results-list").append(
                 `
                 <div class="results-item">
                     <h4>${response.data[i].name}</h4>
@@ -86,32 +99,38 @@ function displayThingsToDo(response) {
                 `
             );
         }
-        else {
-            console.log("Filtered Result");
-        }
         
     }
+    $("#results-list").append(
+        `
+        <div class="back-to-top">
+            <a href="#input-destination">Back to Search</a>
+        </div>
+        `
+    )
     $("#results").removeClass("hidden");
 }
 
 //Creates the Form necessary to grab stay information from user
 function createLengthOfStayForm(data) {
     const destinationId = data.suggestions[0].entities[0].destinationId
-    const currentDate = new Date();
+    $("#results-load").toggleClass("hidden");
     $("#results").empty();
     $("#results").append(
         `
         <div class="results-form">
             <form id="length-of-stay">
                 <label for="check-in">Check-In Date:</label> 
-                <input type="date" id="check-in" class="checkIn" value="${currentDate}" min="${currentDate}" required>
+                <input type="date" id="check-in" class="checkIn" required>
                 <label for="check-out">Check-Out Date:</label>
-                <input type="date" id="check-out" class="checkOut" value="${currentDate}" min="${currentDate}" required>
+                <input type="date" id="check-out" class="checkOut" required>
                 <label for="adults">Number of Adults:</label>
                 <input type="number" id="adults" class="numberAdults" value="2" min="0" max="8" required>
                 <button type="submit" id="js-hotels-submit">Search</button>
             </form>
         </div>
+        <div class="loader hidden" id="hotel-load"></div>
+        <div class="js-accom-error"></div>
         <div id="results-list">
         </div>
         `
@@ -122,8 +141,9 @@ function createLengthOfStayForm(data) {
 
 //After user has inputted necessary info, displays list of accomodations
 function displayHotelsList(data) {
+    $("#hotel-load").toggleClass("hidden");
     if(data.result !== "OK") {
-        alert("Search failed!");
+        $(".js-accom-error").text("Search failed, please try again.");
     }
     else {
         let resultsList = data.data.body.searchResults.results
@@ -140,6 +160,13 @@ function displayHotelsList(data) {
                 `
             );
         }
+        $("#results-list").append(
+            `
+            <div class="back-to-top">
+                <a href="#input-destination">Back to Search</a>
+            </div>
+            `
+        )
     }
     
         
@@ -158,7 +185,7 @@ function getDestination(location) {
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => displayLocation(responseJson))
-        .catch(err => alert(`Something went wrong: Not enough information - ${err.message}`));
+        .catch(err => $(".js-find-error").text(`Something went wrong, Please try again. ${err.message}`));
 }
 
 function getThingsToDo() {
@@ -172,7 +199,7 @@ function getThingsToDo() {
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => displayThingsToDo(responseJson))
-        .catch(err => console.log(`Something went wrong: ${err.message}`));
+        .catch(err => $(".js-results-err").text(`Something went wrong: ${err.message}, Please try again.`));
 } 
 
 function getRestaurants() {
@@ -186,7 +213,7 @@ function getRestaurants() {
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => displayRestaurants(responseJson))
-        .catch(err => alert(`Something went wrong: No restaurants found - ${err.message}`));
+        .catch(err => $(".js-results-err").text(`Something went wrong: ${err.message}, Please try again.`));
 }
 
 function getLocationId() {
@@ -200,7 +227,7 @@ function getLocationId() {
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => createLengthOfStayForm(responseJson))
-        .catch(err => alert(`Something went wrong: ${err.message}`));
+        .catch(err => $(".js-results-err").text(`Something went wrong: ${err.message}, Please try again.`));
 }
 
 function getHotelsList(checkIn, checkOut, numberAdults, destinationId) {
@@ -214,7 +241,7 @@ function getHotelsList(checkIn, checkOut, numberAdults, destinationId) {
     fetch(url, options)
         .then(response => response.ok ? response.json() : Promise.reject({err: response.status}))
         .then(responseJson => displayHotelsList(responseJson))
-        .catch(err => `Something went wrong: ${err.message}`);
+        .catch(err => $(".js-accom-error").text(`Something went wrong: ${err.message}`));
 }
 
 
@@ -229,11 +256,13 @@ function handleHotelsButton(destinationId) {
         const checkIn = $(".checkIn").val();
         const checkOut = $(".checkOut").val();
         const numberAdults = $(".numberAdults").val();
+        $("#hotel-load").toggleClass("hidden");
+        $(".js-accom-error").empty();
         if(checkIn > checkOut) {
-            alert("Check-In Date must be earlier than Check-Out Date")
+            $(".js-accom-error").text("Check-In Date must be earlier than Check-Out Date")
         }
         else if (new Date(checkIn) <= currentDate || new Date(checkOut) < currentDate) {
-            alert("Check-In and Out dates cannot be in the past.")
+            $(".js-accom-error").text("Check-In and Out dates cannot be in the past.")
         }
         else {
             getHotelsList(checkIn, checkOut, numberAdults, destinationId);
@@ -245,6 +274,7 @@ function handleHotelsButton(destinationId) {
 function handleAccommodationsClicked() {
     $("#location-description").on("click", "#accommodations", event => {
         event.preventDefault();
+        $("#results-load").toggleClass("hidden");
         getLocationId();
     });
 }
@@ -252,6 +282,7 @@ function handleAccommodationsClicked() {
 function handleThingsToDoClicked() {
     $("#location-description").on("click", "#things-to-do", event => {
         event.preventDefault();
+        $("#results-load").toggleClass("hidden");
         getThingsToDo();
     });
 }
@@ -259,6 +290,7 @@ function handleThingsToDoClicked() {
 function handleRestaurantsClicked() {
     $("#location-description").on("click", "#restaurants", event => {
         event.preventDefault();
+        $("#results-load").toggleClass("hidden");
         getRestaurants();
     });
 }
@@ -270,6 +302,7 @@ function handleFindDestination() {
         store.locationName = "";
         const userInput = $(".js-destination-input").val();
         event.preventDefault();
+        $("#find-destination").toggleClass("hidden");
         getDestination(userInput);
         handleRestaurantsClicked();
         handleThingsToDoClicked();
@@ -277,4 +310,5 @@ function handleFindDestination() {
     });
 }
 
-handleFindDestination();
+
+$(handleFindDestination);
