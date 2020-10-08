@@ -19,8 +19,7 @@ function displayLocation(response) {
     let locationImg = locationData.photo.images.original.url
     $("#location-description").empty();
     $("#results").empty();
-    console.log(response);
-    if(response.data[0].result_type !== "geo") {
+    if(response.data[0].result_type !== "geos") {
         alert("Unable to find Location, Please try again.");
     }
     else {
